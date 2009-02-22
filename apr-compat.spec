@@ -1,36 +1,31 @@
+# This spec is for kernels < 2.6.27 since apr.spec uses new features
 Summary:	Apache Portable Runtime
 Summary(pl.UTF-8):	Apache Portable Runtime - przenośna biblioteka uruchomieniowa
-Name:		apr
+Name:		apr-compat
 Version:	1.3.3
-Release:	6
+Release:	1
 Epoch:		1
 License:	Apache v2.0
 Group:		Libraries
-Source0:	http://www.apache.org/dist/apr/%{name}-%{version}.tar.bz2
+Source0:	http://www.apache.org/dist/apr/apr-%{version}.tar.bz2
 # Source0-md5:	2090c21dee4f0eb1512604127dcd158f
-Patch0:		%{name}-link.patch
-Patch1:		%{name}-metuxmpm.patch
-Patch2:		%{name}-libtool.patch
-Patch3:		%{name}-bug-46425.patch
+Patch0:		apr-link.patch
+Patch1:		apr-metuxmpm.patch
+Patch2:		apr-libtool.patch
 URL:		http://apr.apache.org/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
-%if "%{pld_release}" != "ac"
 BuildRequires:	libtool >= 2:2.2
-%else
-BuildRequires:	libtool
-%endif
 BuildRequires:	libuuid-devel
 BuildRequires:	python
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpm-pythonprov
 BuildRequires:	sed >= 4.0
-%if "%{pld_release}" != "ac"
-BuildRequires:	uname(release) >= 2.6.23
-Requires:	uname(release) >= 2.6.23
-%endif
+BuildRequires:	uname(release) >= 2.6
+Requires:	uname(release) >= 2.6
 Conflicts:	kernel24
 Conflicts:	kernel24-smp
+Provides:	apr = %{epoch}:%{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_includedir	/usr/include/apr
@@ -63,13 +58,10 @@ Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja programisty do apr
 Group:		Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	automake
-%if "%{pld_release}" != "ac"
 Requires:	libtool >= 2:2.2
-%else
-Requires:	libtool
-%endif
 Requires:	libuuid-devel
 Requires:	python-modules
+Provides:	apr-devel = %{epoch}:%{version}-%{release}
 
 %description devel
 Header files and development documentation for apr.
@@ -82,6 +74,7 @@ Summary:	Static apr library
 Summary(pl.UTF-8):	Statyczna biblioteka apr
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
+Provides:	apr-static = %{epoch}:%{version}-%{release}
 
 %description static
 Static apr library.
@@ -90,11 +83,10 @@ Static apr library.
 Statyczna biblioteka apr.
 
 %prep
-%setup -q
+%setup -q -n apr-%{version}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p0
 
 cat >> config.layout <<'EOF'
 <Layout PLD>
